@@ -17,3 +17,8 @@ class CurrencySchema(BaseModel):
 class CurrencyListResponse(BaseModel):
     currencies: List[CurrencySchema]
     updated_at: str
+
+class PreferenceSchema(BaseModel):
+    email: str
+    currencies: List[str]
+    cryptos: List[str]

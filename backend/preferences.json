@@ -1,0 +1,13 @@
+{
+    "users": [
+        {
+            "email": "nitibraga@gmail.com",
+            "currencies": [
+                "USD"
+            ],
+            "cryptos": [
+                "bitcoin"
+            ]
+        }
+    ]
+}
