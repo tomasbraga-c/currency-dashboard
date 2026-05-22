@@ -1,5 +1,5 @@
 from fastapi import APIRouter, HTTPException
-from app.services.exchange import get_crypto_price, get_available_currencies
+from app.services.exchange import get_available_currencies, get_currencies
 
 
 router = APIRouter()
