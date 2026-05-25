@@ -3,6 +3,7 @@ import { ThemeContext } from '../App'
 import { useCurrencies } from '../hooks/useCurrencies'
 import { CurrencyCard } from '../components/CurrencyCard'
 import { ThemeToggle } from '../components/ThemeToggle'
+import { BitcoinCard } from '../components/BitcoinCard'
 
 
 export default function Dashboard() {
@@ -63,12 +64,16 @@ export default function Dashboard() {
             />
         ))}
         </div>
-      <h2>Crypto</h2>
-      {Object.entries(cryptos).map(([name, data]) => (
-        <div key={name}>
-          <strong>{name}</strong>: R$ {data.brl}
-        </div>
-      ))}
+      {cryptos.bitcoin && (
+        <BitcoinCard
+          name="Bitcoin"
+          brl={cryptos.bitcoin.brl}
+          usd={cryptos.bitcoin.usd}
+          brl24h={cryptos.bitcoin.brl_24h_change}
+          usd24h={cryptos.bitcoin.usd_24h_change}
+        />
+      )}
+
     </div>
   )
 }

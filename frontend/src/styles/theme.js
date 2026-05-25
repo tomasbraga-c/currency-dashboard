@@ -5,8 +5,8 @@ export const lightTheme = {
   accent: '#0F6E56',
   textPrimary: '#0F3D2E',
   textSecondary: '#4A8C72',
-  positive: '#0F6E56',
-  negative: '#C47A5A',
+  positive: '#0A8A4A',  
+  negative: '#C0392B',  
 }
 
 export const darkTheme = {
@@ -16,8 +16,6 @@ export const darkTheme = {
   accent: '#4A9E82',
   textPrimary: '#B8D4C8',
   textSecondary: '#4A9E82',
-  positive: '#4A9E82',
-  negative: '#C47A5A',
+  positive: '#2ECC71', 
+  negative: '#E74C3C',  
 }
-
-

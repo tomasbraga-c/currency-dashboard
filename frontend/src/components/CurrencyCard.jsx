@@ -1,7 +1,7 @@
-import { useContext } from 'react'
-import { ThemeContext } from '../App'
-import { getFlag, cryptoSymbols } from '../utils/flags'
-import { currencyToName } from '../utils/currencies'
+    import { useContext } from 'react'
+    import { ThemeContext } from '../App'
+    import { getFlag, cryptoSymbols } from '../utils/flags'
+    import { currencyToName } from '../utils/currencies'
 
 const formatPrice = (value) => {
   const num = parseFloat(value)
