@@ -19,3 +19,5 @@ export const darkTheme = {
   positive: '#4A9E82',
   negative: '#C47A5A',
 }
+
+
