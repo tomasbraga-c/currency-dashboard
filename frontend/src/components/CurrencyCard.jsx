@@ -16,6 +16,7 @@ export function CurrencyCard({ code, name, bid, pctChange, high, low, touristRat
   const countryCode = getFlag(code)
 
   const activeData = isTourist && touristRate ? touristRate : { bid, pctChange, high, low }
+  const displayPrice = isTourist && touristRate ? touristRate.ask : bid
   const isPositive = parseFloat(activeData.pctChange) >= 0
 
   return (
@@ -72,7 +73,7 @@ export function CurrencyCard({ code, name, bid, pctChange, high, low, touristRat
       </div>
 
       <div style={{ color: theme.textPrimary, fontSize: '20px', fontWeight: '500' }}>
-        R$ {formatPrice(activeData.bid)}
+        R$ {formatPrice(displayPrice)}
       </div>
       <div style={{ color: isPositive ? theme.positive : theme.negative, fontSize: '13px' }}>
         {isPositive ? '▲' : '▼'} {parseFloat(activeData.pctChange).toFixed(2)}%

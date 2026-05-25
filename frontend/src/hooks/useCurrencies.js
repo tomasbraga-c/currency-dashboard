@@ -4,8 +4,6 @@ import { getCurrencies, getCryptos } from '../services/api'
 const TOURIST_MAP = {
   USD: 'USDBRLT',
   EUR: 'EURBRLT',
-  GBP: 'GBPBRLPTAX',
-  JPY: 'JPYBRLPTAX',
 }
 
 export function useCurrencies() {

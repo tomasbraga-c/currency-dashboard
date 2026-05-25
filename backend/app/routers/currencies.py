@@ -7,7 +7,7 @@ router = APIRouter()
 
 DEFAULT_CURRENCIES = [
     "USD-BRL", "EUR-BRL", "GBP-BRL", "JPY-BRL", "ARS-BRL",
-    "USD-BRLT", "EUR-BRLT", "GBP-BRLPTAX", "JPY-BRLPTAX"
+    "USD-BRLT", "EUR-BRLT"
 ]
 
 @router.get("/currencies")
