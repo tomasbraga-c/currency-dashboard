@@ -4,11 +4,17 @@ import { useCurrencies } from '../hooks/useCurrencies'
 import { CurrencyCard } from '../components/CurrencyCard'
 import { ThemeToggle } from '../components/ThemeToggle'
 import { BitcoinCard } from '../components/BitcoinCard'
+import { DailyPerformance  } from '../components/RankingList'
 
 
 export default function Dashboard() {
   const { theme } = useContext(ThemeContext)
   const { currencies, touristRates, cryptos, loading, error } = useCurrencies()
+  const sorted = Object.values(currencies)
+  .sort((a, b) => parseFloat(b.pctChange) - parseFloat(a.pctChange))
+  const topGainers = sorted.slice(0, 3)
+  const topLosers = [...sorted].reverse().slice(0, 3)
+  const allNegative = topGainers.every(i => parseFloat(i.pctChange) < 0)
 
   if (loading) return <p style={{ padding: '20px' }}>Carregando...</p>// tela de loading
   
@@ -75,6 +81,7 @@ export default function Dashboard() {
         />
       )}
 
+      <DailyPerformance items={sorted} />
     </div>
   )
 }

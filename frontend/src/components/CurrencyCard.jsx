@@ -67,7 +67,33 @@ export function CurrencyCard({ code, name, bid, pctChange, high, low, touristRat
               marginLeft: '6px',
             }}
           >
-            {isTourist ? '✈️ Turismo' : '💼 Comercial'}
+            {isTourist ? (
+                <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    <img 
+                    src="/turismo.png" 
+                    alt="turismo" 
+                    style={{ 
+                        width: '12px', 
+                        height: '12px',
+                        filter: 'brightness(0) invert(1)' 
+                    }} 
+                    />
+                    Turismo
+                </span>
+                ) : (
+                <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    <img 
+                    src="/comercial.png" 
+                    alt="comercial" 
+                    style={{ 
+                        width: '12px', 
+                        height: '12px',
+                        filter: 'brightness(0) opacity(0.5)'
+                    }} 
+                    />
+                    Comercial
+                </span>
+                )}
           </div>
         )}
       </div>
@@ -79,7 +105,10 @@ export function CurrencyCard({ code, name, bid, pctChange, high, low, touristRat
         {isPositive ? '▲' : '▼'} {parseFloat(activeData.pctChange).toFixed(2)}%
       </div>
       <div style={{ color: theme.textSecondary, fontSize: '12px', marginTop: '6px' }}>
-        Máx: R$ {formatPrice(activeData.high)} · Mín: R$ {formatPrice(activeData.low)}
+        {isTourist && touristRate
+            ? <span style={{ fontStyle: 'italic', fontSize: '11px' }}>Máx/Mín não disponível para câmbio turístico</span>
+            : `Máx: R$ ${formatPrice(activeData.high)} · Mín: R$ ${formatPrice(activeData.low)}`
+        }
       </div>
     </div>
   )
