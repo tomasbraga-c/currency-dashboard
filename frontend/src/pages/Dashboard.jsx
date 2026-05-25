@@ -8,7 +8,7 @@ import { BitcoinCard } from '../components/BitcoinCard'
 
 export default function Dashboard() {
   const { theme } = useContext(ThemeContext)
-  const { currencies, cryptos, loading, error } = useCurrencies()
+  const { currencies, touristRates, cryptos, loading, error } = useCurrencies()
 
   if (loading) return <p style={{ padding: '20px' }}>Carregando...</p>// tela de loading
   
@@ -48,19 +48,20 @@ export default function Dashboard() {
         </div>
         <div style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(230px, 1fr))',
             gap: '12px',
             marginBottom: '24px'
         }}>
         {Object.values(currencies).map(curr => (
             <CurrencyCard
-            key={curr.code}
-            code={curr.code}
-            name={curr.name}
-            bid={curr.bid}
-            pctChange={curr.pctChange}
-            high={curr.high}
-            low={curr.low}
+              key={curr.code}
+              code={curr.code}
+              name={curr.name}
+              bid={curr.bid}
+              pctChange={curr.pctChange}
+              high={curr.high}
+              low={curr.low}
+              touristRate={touristRates[curr.code]}
             />
         ))}
         </div>

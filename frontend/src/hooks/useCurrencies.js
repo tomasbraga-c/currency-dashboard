@@ -1,33 +1,54 @@
 import { useState, useEffect } from 'react'
 import { getCurrencies, getCryptos } from '../services/api'
 
+const TOURIST_MAP = {
+  USD: 'USDBRLT',
+  EUR: 'EURBRLT',
+  GBP: 'GBPBRLPTAX',
+  JPY: 'JPYBRLPTAX',
+}
+
 export function useCurrencies() {
   const [currencies, setCurrencies] = useState({})
+  const [touristRates, setTouristRates] = useState({})
   const [cryptos, setCryptos] = useState({})
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
   const fetchData = async () => {
     try {
-      const [currenciesResponse, cryptosResponse] = await Promise.all([
+      const [currenciesRes, cryptosRes] = await Promise.all([
         getCurrencies(),
         getCryptos()
-      ]);
+      ])
 
-      setCurrencies(currenciesResponse.data);
-      setCryptos(cryptosResponse.data);
-      setLoading(false);
+      const allData = currenciesRes.data
+      const commercial = {}
+      const tourist = {}
+
+      Object.entries(allData).forEach(([key, value]) => {
+        if (key.includes('BRLT') || key.includes('BRLPTAX')) {
+          tourist[value.code] = value
+        } else {
+          commercial[key] = value
+        }
+      })
+
+      setCurrencies(commercial)
+      setTouristRates(tourist)
+      setCryptos(cryptosRes.data)
+      setLoading(false)
     } catch (err) {
-      setError(err);
-      setLoading(false);
+      setError(err)
+      setLoading(false)
     }
-  };
+  }
 
   useEffect(() => {
-    fetchData();
-    const interval = setInterval(fetchData, 60000); 
-    return () => clearInterval(interval);
-  }, []);
+    fetchData()
+    const interval = setInterval(fetchData, 60000)
+    return () => clearInterval(interval)
+  }, [])
 
-  return { currencies, cryptos, loading, error }
+  return { currencies, touristRates, cryptos, loading, error }
 }
