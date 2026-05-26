@@ -201,6 +201,25 @@ export default function Dashboard() {
         onClose={() => setIsModalOpen(false)}
         availableCurrencies={allCurrencies.length > 0 ? allCurrencies : Object.keys(currencies)}
       />
+      <div style={{
+          marginTop: '32px',
+          paddingTop: '16px',
+          borderTop: `1px solid ${theme.border}`,
+          fontSize: '11px',
+          color: theme.textSecondary,
+          textAlign: 'center',
+          lineHeight: 1.6,
+        }}>
+          <p style={{ margin: 0 }}>
+            Valores de <strong>câmbio comercial</strong> — referência para investimentos e análise de mercado.
+          </p>
+          <p style={{ margin: '4px 0 0 0' }}>
+            Para câmbio turístico (USD/EUR), os valores exibidos são taxa de venda ao consumidor.
+          </p>
+          <p style={{ margin: '4px 0 0 0' }}>
+            Dados fornecidos por <strong>AwesomeAPI</strong> e <strong>CoinGecko</strong> · Atualização a cada 60s
+          </p>
+      </div>
     </div>
   )
 }
