@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({ 
-    baseURL: 'http://localhost:8000/api/v1'
+    baseURL: import.meta.env.VITE_API_URL || 'http://localhost:8000/api/v1'
 });
 
 export default api;
@@ -25,4 +25,3 @@ export const getPreferences = (email) =>
 export const getCurrencyHistory = (symbol, days = 30) => 
   api.get(`/currencies/${symbol}/history?days=${days}`)
 
-export const getCryptoPrice = (id) => api.get(`/cryptos/${id}`)
