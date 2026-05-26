@@ -2,7 +2,7 @@
 
 > **TRAVEL · INVEST · TRACK** — Dashboard de cotações de moedas internacionais e criptomoedas em tempo real.
 
-![Currency.Dash](https://currency-dashboard-beryl.vercel.app)
+![Currency.Dash Preview](https://currency-dashboard-beryl.vercel.app/preview.png)
 
 ## 🔗 Links
 
