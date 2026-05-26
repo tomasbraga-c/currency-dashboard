@@ -25,3 +25,16 @@ app.include_router(summary.router, prefix="/api/v1")
 async def root():
     return {"message": "Currency Dashboard API running"}
 
+@app.get("/debug")
+async def debug():
+    import httpx
+    try:
+        async with httpx.AsyncClient() as client:
+            response = await client.get(
+                "https://economia.awesomeapi.com.br/json/last/USD-BRL",
+                timeout=10.0,
+                headers={"User-Agent": "Mozilla/5.0"}
+            )
+            return {"status": response.status_code, "body": response.text[:200]}
+    except Exception as e:
+        return {"error": str(e)}
