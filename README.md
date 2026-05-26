@@ -191,4 +191,3 @@ Este projeto está sob a licença MIT.
 
 ---
 
-> Desenvolvido com 🤍 como projeto de portfólio — Engenharia de Software, 3º semestre.
