@@ -27,3 +27,15 @@ async def get_available_currencies() -> dict:
         raise Exception("AwesomeAPI não respondeu a tempo")
     except httpx.HTTPStatusError as e:
         raise Exception(f"Erro na AwesomeAPI: {e.response.status_code}")
+    
+async def get_currency_history(symbol: str, days: int = 30) -> list:
+    url = f"https://economia.awesomeapi.com.br/json/daily/{symbol}/{days}"
+    try:
+        async with httpx.AsyncClient() as client:
+            response = await client.get(url, timeout=10.0)
+            response.raise_for_status()
+            return response.json()
+    except httpx.TimeoutException:
+        raise Exception("AwesomeAPI não respondeu a tempo")
+    except httpx.HTTPStatusError as e:
+        raise Exception(f"Erro na AwesomeAPI: {e.response.status_code}")

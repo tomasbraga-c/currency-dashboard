@@ -8,6 +8,9 @@ import { BitcoinCard } from '../components/BitcoinCard'
 import { DailyPerformance } from '../components/RankingList'
 import { SearchBar } from '../components/SearchBar'
 import { getCurrencyBySymbol } from '../services/api'
+import { HistoryChart } from '../components/HistoryChart'
+
+
 
 const MAX_EXTRA_CURRENCIES = 5
 
@@ -152,7 +155,7 @@ export default function Dashboard() {
           usd24h={cryptos.bitcoin.usd_24h_change}
         />
       )}
-
+      <HistoryChart symbol="USD-BRL" />
       <DailyPerformance items={sorted} />
     </div>
   )
