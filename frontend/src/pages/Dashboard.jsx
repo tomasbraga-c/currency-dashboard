@@ -1,4 +1,4 @@
-import { useState, useContext } from 'react'
+import { useState, useEffect, useContext } from 'react'
 import { ThemeContext } from '../App'
 import { useCurrencies } from '../hooks/useCurrencies'
 import { useIsMobile } from '../hooks/useIsMobile'
@@ -7,10 +7,9 @@ import { ThemeToggle } from '../components/ThemeToggle'
 import { BitcoinCard } from '../components/BitcoinCard'
 import { DailyPerformance } from '../components/RankingList'
 import { SearchBar } from '../components/SearchBar'
-import { getCurrencyBySymbol } from '../services/api'
+import { getCurrencyBySymbol, getAvailableCurrencies } from '../services/api'
 import { HistoryChart } from '../components/HistoryChart'
-
-
+import { EmailModal } from '../components/EmailModal'
 
 const MAX_EXTRA_CURRENCIES = 5
 
@@ -18,7 +17,15 @@ export default function Dashboard() {
   const { theme, isDark } = useContext(ThemeContext)
   const { currencies, touristRates, cryptos, loading } = useCurrencies()
   const [extraCurrencies, setExtraCurrencies] = useState({})
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [allCurrencies, setAllCurrencies] = useState([])
   const isMobile = useIsMobile()
+
+  useEffect(() => {
+    getAvailableCurrencies().then(res => {
+      setAllCurrencies(Object.keys(res.data))
+    }).catch(err => console.error('Erro ao buscar moedas disponíveis:', err))
+  }, [])
 
   const handleAddCurrency = async (symbol) => {
     if (Object.keys(extraCurrencies).length >= MAX_EXTRA_CURRENCIES) {
@@ -91,7 +98,36 @@ export default function Dashboard() {
             </div>
           </div>
         </div>
-        <div style={{ flexShrink: 0 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
+          <button
+            onClick={() => setIsModalOpen(true)}
+            style={{
+              fontSize: '12px',
+              padding: '6px 12px',
+              borderRadius: '8px',
+              gap: '6px',
+              display: 'flex',
+              alignItems: 'center',
+              border: `1px solid ${theme.border}`,
+              backgroundColor: 'transparent',
+              color: theme.textSecondary,
+              cursor: 'pointer',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <img
+              src="/iconemail.png"
+              alt="email"
+              style={{
+                width: '14px',
+                height: '14px',
+                filter: isDark ? 'brightness(0) invert(1)' : 'brightness(0) opacity(0.6)',
+                objectFit: 'contain',
+                verticalAlign: 'middle',
+              }}
+            />
+            {!isMobile && 'Relatório'}
+          </button>
           <ThemeToggle />
         </div>
       </div>
@@ -155,8 +191,16 @@ export default function Dashboard() {
           usd24h={cryptos.bitcoin.usd_24h_change}
         />
       )}
+
       <HistoryChart symbol="USD-BRL" />
+
       <DailyPerformance items={sorted} />
+
+      <EmailModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        availableCurrencies={allCurrencies.length > 0 ? allCurrencies : Object.keys(currencies)}
+      />
     </div>
   )
 }

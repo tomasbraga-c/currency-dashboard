@@ -19,5 +19,8 @@ export const getAvailableCurrencies = () => api.get('/currencies/available')
 export const savePreferences = (email, currencies, cryptos) =>
   api.post('/preferences', { email, currencies, cryptos })
 
+export const getPreferences = (email) =>
+  api.get(`/preferences/${email}`)
+
 export const getCurrencyHistory = (symbol, days = 30) => 
   api.get(`/currencies/${symbol}/history?days=${days}`)
