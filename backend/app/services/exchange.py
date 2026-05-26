@@ -4,13 +4,19 @@ import time
 _cache = {}
 CACHE_TTL = 60  # segundos
 
+HEADERS = {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+    "Accept": "application/json",
+    "Accept-Language": "pt-BR,pt;q=0.9,en;q=0.8",
+}
+
 async def _fetch(url: str) -> dict:
     now = time.time()
     if url in _cache and now - _cache[url]['time'] < CACHE_TTL:
         return _cache[url]['data']
     
     async with httpx.AsyncClient() as client:
-        response = await client.get(url, timeout=10.0)
+        response = await client.get(url, timeout=10.0, headers=HEADERS)
         response.raise_for_status()
         data = response.json()
         _cache[url] = {'data': data, 'time': now}
