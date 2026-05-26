@@ -1,3 +1,18 @@
+# Python
 __pycache__/
 *.pyc
+*.pyo
+venv/
+.env
+
+# Node
+node_modules/
+frontend/dist/
+frontend/dist-ssr/
+
+# Local config
+*.local.json
+*.local
+
+# Claude Code
 .claude/
