@@ -4,12 +4,12 @@ import { useCurrencies } from '../hooks/useCurrencies'
 import { useIsMobile } from '../hooks/useIsMobile'
 import { CurrencyCard } from '../components/CurrencyCard'
 import { ThemeToggle } from '../components/ThemeToggle'
-import { BitcoinCard } from '../components/BitcoinCard'
 import { DailyPerformance } from '../components/RankingList'
 import { SearchBar } from '../components/SearchBar'
-import { getCurrencyBySymbol, getAvailableCurrencies } from '../services/api'
+import { getCurrencyBySymbol, getAvailableCurrencies, getCryptoPrice } from '../services/api'
 import { HistoryChart } from '../components/HistoryChart'
 import { EmailModal } from '../components/EmailModal'
+import { CryptoCard } from '../components/BitcoinCard'
 
 const MAX_EXTRA_CURRENCIES = 5
 
@@ -17,6 +17,7 @@ export default function Dashboard() {
   const { theme, isDark } = useContext(ThemeContext)
   const { currencies, touristRates, cryptos, loading } = useCurrencies()
   const [extraCurrencies, setExtraCurrencies] = useState({})
+  const [extraCryptos, setExtraCryptos] = useState({})
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [allCurrencies, setAllCurrencies] = useState([])
   const isMobile = useIsMobile()
@@ -62,32 +63,32 @@ export default function Dashboard() {
 
   const handleAddCurrency = async (symbol) => {
     if (Object.keys(extraCurrencies).length >= MAX_EXTRA_CURRENCIES) {
-      alert(`Limite de ${MAX_EXTRA_CURRENCIES} moedas extras atingido! Remova uma para adicionar outra.`)
+      alert(`Limite de ${MAX_EXTRA_CURRENCIES} moedas extras atingido!`)
       return
     }
-
     const key = symbol.replace('-', '')
-    const allKeys = [
-      ...Object.keys(currencies),
-      ...Object.keys(extraCurrencies)
-    ]
-
-    if (allKeys.includes(key)) {
-      console.log('Moeda já existe!')
-      return
-    }
-
+    const allKeys = [...Object.keys(currencies), ...Object.keys(extraCurrencies)]
+    if (allKeys.includes(key)) return
     try {
       const res = await getCurrencyBySymbol(symbol)
       if (!res.data || Object.keys(res.data).length === 0) {
-        alert(`Moeda "${symbol}" não encontrada. Tente outro par como CHF-BRL ou CNY-BRL.`)
+        alert(`Moeda "${symbol}" não encontrada.`)
         return
       }
       const dataKey = Object.keys(res.data)[0]
       setExtraCurrencies(prev => ({ ...prev, [dataKey]: res.data[dataKey] }))
     } catch (err) {
-      alert(`Não foi possível adicionar "${symbol}". Esta moeda pode não estar disponível.`)
-      console.error('Erro ao buscar moeda:', err)
+      alert(`Não foi possível adicionar "${symbol}".`)
+    }
+  }
+
+  const handleAddCrypto = async (id, name) => {
+    if (extraCryptos[id]) return
+    try {
+      const res = await getCryptoPrice(id)
+      setExtraCryptos(prev => ({ ...prev, [id]: { ...res.data[id], name } }))
+    } catch (err) {
+      console.error('Erro ao buscar crypto:', err)
     }
   }
 
@@ -169,7 +170,6 @@ export default function Dashboard() {
         </div>
       </div>
 
-
       {/* SEÇÃO: COTAÇÕES */}
       <SectionTitle icon="icone-cotacoes.png" title="Cotações do Dia" />
       <SearchBar onAdd={handleAddCurrency} />
@@ -202,7 +202,6 @@ export default function Dashboard() {
         </div>
       )}
 
-
       <div style={{
         display: 'grid',
         gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fit, minmax(230px, 1fr))',
@@ -225,15 +224,66 @@ export default function Dashboard() {
 
       {/* SEÇÃO: CRIPTOMOEDAS */}
       <SectionTitle icon="icone-crypto.png" title="Criptomoedas" />
+
+      <div style={{ marginBottom: '12px' }}>
+        <select
+          onChange={(e) => {
+            const [id, name] = e.target.value.split('|')
+            if (id) handleAddCrypto(id, name)
+            e.target.value = ''
+          }}
+          style={{
+            padding: '8px 12px',
+            borderRadius: '8px',
+            border: `1px solid ${theme.border}`,
+            backgroundColor: theme.card,
+            color: theme.textPrimary,
+            fontSize: '13px',
+            cursor: 'pointer',
+            outline: 'none',
+          }}
+        >
+          <option value="">+ Adicionar criptomoeda...</option>
+          {[
+            { id: 'solana', name: 'Solana' },
+            { id: 'binancecoin', name: 'BNB' },
+            { id: 'ripple', name: 'XRP' },
+            { id: 'dogecoin', name: 'Dogecoin' },
+            { id: 'litecoin', name: 'Litecoin' },
+          ].filter(c => !extraCryptos[c.id]).map(c => (
+            <option key={c.id} value={`${c.id}|${c.name}`}>{c.name}</option>
+          ))}
+        </select>
+      </div>
+
       {cryptos.bitcoin && (
-        <BitcoinCard
-          name="Bitcoin"
-          brl={cryptos.bitcoin.brl}
-          usd={cryptos.bitcoin.usd}
-          brl24h={cryptos.bitcoin.brl_24h_change}
-          usd24h={cryptos.bitcoin.usd_24h_change}
+        <CryptoCard
+          id="bitcoin" name="Bitcoin"
+          brl={cryptos.bitcoin.brl} usd={cryptos.bitcoin.usd}
+          brl24h={cryptos.bitcoin.brl_24h_change} usd24h={cryptos.bitcoin.usd_24h_change}
         />
       )}
+
+      {cryptos.ethereum && (
+        <CryptoCard
+          id="ethereum" name="Ethereum"
+          brl={cryptos.ethereum.brl} usd={cryptos.ethereum.usd}
+          brl24h={cryptos.ethereum.brl_24h_change} usd24h={cryptos.ethereum.usd_24h_change}
+        />
+      )}
+
+      {Object.entries(extraCryptos).map(([id, data]) => (
+        <CryptoCard
+          key={id} id={id} name={data.name}
+          brl={data.brl} usd={data.usd}
+          brl24h={data.brl_24h_change} usd24h={data.usd_24h_change}
+          onRemove={() => setExtraCryptos(prev => {
+            const updated = { ...prev }
+            delete updated[id]
+            return updated
+          })}
+        />
+      ))}
 
       {/* SEÇÃO: EVOLUÇÃO HISTÓRICA */}
       <SectionTitle icon="icone-grafico.png" title="Evolução Histórica" />

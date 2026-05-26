@@ -9,7 +9,7 @@ const extractCode = (key) => {
 
 const cryptoOptions = [
   { id: 'bitcoin', label: '₿ Bitcoin' },
-  { id: 'ethereum', label: 'Ξ Ethereum' },
+  { id: 'ethereum', label: null, name: 'Ethereum' },
   { id: 'solana', label: '◎ Solana' },
   { id: 'binancecoin', label: '⧫ BNB' },
   { id: 'ripple', label: 'X XRP' },
@@ -180,7 +180,14 @@ export function EmailModal({ isOpen, onClose, availableCurrencies }) {
                   style={{ marginRight: '8px' }}
                 />
                 <span style={{ fontSize: '13px', color: theme.textPrimary }}>
-                  {crypto.label}
+                    <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                        {crypto.id === 'ethereum' ? (
+                            <img src="/icone-ethereum.png" alt="ethereum" style={{ width: '14px', height: '14px', objectFit: 'contain' }} />
+                        ) : (
+                            <span>{cryptoOptions.find(c => c.id === crypto.id)?.label}</span>
+                        )}
+                        {crypto.id === 'ethereum' ? 'Ethereum' : ''}
+                    </span>
                 </span>
               </div>
             ))}

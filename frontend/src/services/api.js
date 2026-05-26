@@ -24,3 +24,5 @@ export const getPreferences = (email) =>
 
 export const getCurrencyHistory = (symbol, days = 30) => 
   api.get(`/currencies/${symbol}/history?days=${days}`)
+
+export const getCryptoPrice = (id) => api.get(`/cryptos/${id}`)
