@@ -2,6 +2,7 @@ import { useContext } from 'react'
 import { ThemeContext } from '../App'
 import { getFlag } from '../utils/flags'
 import { currencyToName } from '../utils/currencies'
+import { useIsMobile } from '../hooks/useIsMobile'
 
 const formatPrice = (value) => {
   const num = parseFloat(value)
@@ -12,14 +13,15 @@ const formatPrice = (value) => {
 
 export function DailyPerformance({ items }) {
   const { theme } = useContext(ThemeContext)
+  const isMobile = useIsMobile()
 
   return (
     <div style={{
       backgroundColor: theme.card,
       border: `1px solid ${theme.border}`,
       borderRadius: '8px',
-      padding: '16px',
-      marginBottom: '24px',
+      padding: isMobile ? '12px' : '16px',
+      marginBottom: isMobile ? '16px' : '24px',
     }}>
       <h3 style={{ color: theme.accent, fontSize: '14px', margin: '0 0 12px 0' }}>
         Desempenho do Dia
@@ -47,13 +49,23 @@ export function DailyPerformance({ items }) {
                 style={{ width: '22px', borderRadius: '2px' }}
               />
             )}
-            <span style={{ fontSize: '13px', color: theme.textPrimary, flex: 1 }}>
+            <span style={{
+              fontSize: '13px',
+              color: theme.textPrimary,
+              flex: 1,
+              minWidth: 0,
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+            }}>
               {currencyToName[item.code] || item.name}
             </span>
             <div style={{
               display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
+              flexDirection: isMobile ? 'column' : 'row',
+              alignItems: isMobile ? 'flex-end' : 'center',
+              gap: isMobile ? '2px' : '8px',
+              flexShrink: 0,
             }}>
               <span style={{ fontSize: '12px', color: theme.textSecondary }}>
                 R$ {formatPrice(item.bid)}
@@ -62,7 +74,7 @@ export function DailyPerformance({ items }) {
                 fontSize: '13px',
                 fontWeight: '500',
                 color: isPositive ? theme.positive : theme.negative,
-                minWidth: '60px',
+                minWidth: isMobile ? 'unset' : '60px',
                 textAlign: 'right',
               }}>
                 {isPositive ? '▲' : '▼'} {Math.abs(pct).toFixed(2)}%

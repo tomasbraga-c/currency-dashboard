@@ -8,6 +8,8 @@ export default api;
 
 export const getCurrencies = () => api.get('/currencies')
 
+export const getCurrencyBySymbol = (symbol) => api.get(`/currencies/${symbol}`)
+
 export const getCryptos = () => api.get('/cryptos')
 
 export const getSummary = () => api.get('/summary')
@@ -16,3 +18,4 @@ export const getAvailableCurrencies = () => api.get('/currencies/available')
 
 export const savePreferences = (email, currencies, cryptos) =>
   api.post('/preferences', { email, currencies, cryptos })
+

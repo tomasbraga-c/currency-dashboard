@@ -27,7 +27,7 @@ export function CurrencyCard({ code, name, bid, pctChange, high, low, touristRat
       padding: '16px',
     }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', overflow: 'hidden' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', overflow: 'hidden', minWidth: 0 }}>
           {countryCode ? (
             <img
               src={`https://flagcdn.com/w40/${countryCode.toLowerCase()}.png`}

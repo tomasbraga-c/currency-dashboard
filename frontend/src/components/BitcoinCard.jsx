@@ -1,8 +1,10 @@
 import { useContext } from 'react'
 import { ThemeContext } from '../App'
+import { useIsMobile } from '../hooks/useIsMobile'
 
 export function BitcoinCard({ name, brl, usd, brl24h, usd24h }) {
   const { theme } = useContext(ThemeContext)
+  const isMobile = useIsMobile()
   const isBrlPositive = brl24h >= 0
   const isUsdPositive = usd24h >= 0
 
@@ -11,11 +13,11 @@ export function BitcoinCard({ name, brl, usd, brl24h, usd24h }) {
       backgroundColor: theme.card,
       border: `1px solid ${theme.border}`,
       borderRadius: '8px',
-      padding: '20px 24px',
-      marginBottom: '24px',
+      padding: isMobile ? '16px' : '20px 24px',
+      marginBottom: isMobile ? '16px' : '24px',
       display: 'grid',
-      gridTemplateColumns: '1fr 1fr',
-      gap: '24px',
+      gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
+      gap: isMobile ? '0' : '24px',
       alignItems: 'center',
     }}>
       {/* Lado esquerdo — BRL */}
@@ -48,8 +50,11 @@ export function BitcoinCard({ name, brl, usd, brl24h, usd24h }) {
 
       {/* Lado direito — USD */}
       <div style={{
-        borderLeft: `1px solid ${theme.border}`,
-        paddingLeft: '24px',
+        borderLeft: isMobile ? 'none' : `1px solid ${theme.border}`,
+        borderTop: isMobile ? `1px solid ${theme.border}` : 'none',
+        paddingLeft: isMobile ? '0' : '24px',
+        paddingTop: isMobile ? '16px' : '0',
+        marginTop: isMobile ? '4px' : '0',
       }}>
         <div style={{ fontSize: '11px', color: theme.textSecondary, marginBottom: '2px', letterSpacing: '0.05em' }}>
           BITCOIN · USD
