@@ -15,10 +15,10 @@ const MAX_EXTRA_CURRENCIES = 5
 
 export default function Dashboard() {
   const { theme, isDark } = useContext(ThemeContext)
-  const { currencies, touristRates, cryptos, loading } = useCurrencies()
+  const { currencies, touristRates, cryptos, loading, serverStatus } = useCurrencies()
   const [extraCurrencies, setExtraCurrencies] = useState({})
   const [extraCryptos, setExtraCryptos] = useState({})
-  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [isModalOpen, setIsModalOpen] = useState(false) 
   const [allCurrencies, setAllCurrencies] = useState([])
   const isMobile = useIsMobile()
 
@@ -97,7 +97,41 @@ export default function Dashboard() {
     ...Object.values(extraCurrencies)
   ].sort((a, b) => parseFloat(b.pctChange) - parseFloat(a.pctChange))
 
-  if (loading) return <p style={{ padding: '20px' }}>Carregando...</p>
+  if (loading) return (
+  <div style={{
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    minHeight: '100vh',
+    gap: '16px',
+    color: theme.textSecondary,
+    fontFamily: 'Arial, sans-serif'
+  }}>
+    <img
+      src={isDark ? '/icon-white.png' : '/icon.png'}
+      alt="Currency.Dash"
+      style={{ height: '60px', opacity: 0.7 }}
+    />
+    <p style={{ fontSize: '16px', fontWeight: '600', margin: 0 }}>
+      Currency.Dash
+    </p>
+    {serverStatus === 'waking' ? (
+      <>
+        <p style={{ fontSize: '14px', margin: 0 }}>
+          ⏳ Servidor acordando...
+        </p>
+        <p style={{ fontSize: '12px', margin: 0, opacity: 0.6 }}>
+          O servidor estava em repouso. Aguarde alguns segundos.
+        </p>
+      </>
+    ) : (
+      <p style={{ fontSize: '14px', margin: 0 }}>
+        Carregando dados...
+      </p>
+    )}
+  </div>
+)
 
   return (
     <div style={{ padding: isMobile ? '12px' : '20px', color: theme.textPrimary }}>
