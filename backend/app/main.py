@@ -25,6 +25,10 @@ app.include_router(summary.router, prefix="/api/v1")
 async def root():
     return {"message": "Currency Dashboard API running"}
 
+@app.get("/health")
+async def health_check():
+    return {"status": "ok"}
+
 @app.get("/debug")
 async def debug():
     import httpx
