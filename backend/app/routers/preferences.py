@@ -1,5 +1,5 @@
 from fastapi import APIRouter, HTTPException
-from app.services.preferences import get_preference, upsert_preference
+from app.services.preferences import get_preference, upsert_preference, get_all_preferences
 from app.models.schemas import PreferenceSchema
 
 router = APIRouter()
@@ -24,6 +24,14 @@ async def save_preference(preference: PreferenceSchema):
             preference.currencies,
             preference.cryptos
         )
+        return data
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    
+@router.get("/preferences")
+async def read_all_preferences():
+    try:
+        data = get_all_preferences()
         return data
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

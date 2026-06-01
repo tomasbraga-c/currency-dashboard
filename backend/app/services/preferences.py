@@ -42,3 +42,6 @@ def upsert_preference(email: str, currencies: list, cryptos: list) -> dict:
     save_preferences(preferences)
     return new_user
 
+def get_all_preferences() -> list:
+    preferences = read_preferences()
+    return preferences.get("users", [])
