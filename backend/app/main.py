@@ -1,11 +1,27 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from contextlib import asynccontextmanager
 from app.routers import currencies, bitcoin, preferences, summary
+from app.services.crypto import get_multiple_cryptos
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    print("Servidor acordando — pre-aquecendo cache...")
+    try:
+        await get_multiple_cryptos([
+            "bitcoin", "ethereum", "solana", "binancecoin",
+            "ripple", "dogecoin", "litecoin"
+        ])
+        print("Cache aquecido!")
+    except Exception as e:
+        print(f"Erro ao pre-aquecer cache: {e}")
+    yield
 
 app = FastAPI(
     title="Currency Dashboard API",
     description="API de cotações de moedas e criptomoedas",
-    version="1.0.0"
+    version="1.0.0",
+    lifespan=lifespan
 )
 
 app.add_middleware(
