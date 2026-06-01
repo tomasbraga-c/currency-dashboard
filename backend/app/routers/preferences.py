@@ -4,6 +4,15 @@ from app.models.schemas import PreferenceSchema
 
 router = APIRouter()
 
+@router.get("/preferences")
+async def read_all_preferences():
+    try:
+        data = get_all_preferences()
+        return data
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 @router.get("/preferences/{email}")
 async def read_user_preference(email: str):
     try:
@@ -28,10 +37,3 @@ async def save_preference(preference: PreferenceSchema):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
     
-@router.get("/preferences")
-async def read_all_preferences():
-    try:
-        data = get_all_preferences()
-        return data
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
