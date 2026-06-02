@@ -1,8 +1,12 @@
 import httpx
 import time
 import asyncio
+import os
 
-HEADERS = {"User-Agent": "CurrencyDash/1.0"}
+HEADERS = {
+    "User-Agent": "CurrencyDash/1.0",
+    "x-cg-demo-api-key": os.getenv("COINGECKO_API_KEY", "")
+}
 
 _cache = {}
 CACHE_TTL = 1800
