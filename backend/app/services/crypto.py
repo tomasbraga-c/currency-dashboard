@@ -4,7 +4,7 @@ import time
 HEADERS = {"User-Agent": "CurrencyDash/1.0"}
 
 _cache = {}
-CACHE_TTL = 300  # 5 minutos
+CACHE_TTL = 1800    
 
 async def _fetch_crypto(url: str) -> dict:
     now = time.time()

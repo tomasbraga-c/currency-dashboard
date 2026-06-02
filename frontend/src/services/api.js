@@ -12,7 +12,19 @@ export const getCurrencyBySymbol = (symbol) => api.get(`/currencies/${symbol}`)
 
 export const getCryptos = () => api.get('/cryptos')
 
-export const getCryptoPrice = (id) => api.get(`/cryptos/${id}`)
+export const getCryptoPrice = async (id, tentativas = 3) => {
+  for (let i = 0; i < tentativas; i++) {
+    try {
+      return await api.get(`/cryptos/${id}`)
+    } catch (err) {
+      if (i < tentativas - 1) {
+        await new Promise(res => setTimeout(res, 2000)) // espera 2s e tenta de novo
+      } else {
+        throw err
+      }
+    }
+  }
+}
 
 export const getSummary = () => api.get('/summary')
 
