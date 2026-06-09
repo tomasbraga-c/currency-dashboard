@@ -14,6 +14,8 @@ export function useCurrencies() {
   const [error, setError] = useState(null)
 
   const fetchData = async () => {
+    setError(null)
+    setLoading(true)
     try {
       const [currenciesRes, cryptosRes] = await Promise.all([
         getCurrencies(),
@@ -48,5 +50,5 @@ export function useCurrencies() {
     return () => clearInterval(interval)
   }, [])
 
-  return { currencies, touristRates, cryptos, loading, error }
+  return { currencies, touristRates, cryptos, loading, error, retry: fetchData }
 }

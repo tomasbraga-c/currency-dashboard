@@ -2,6 +2,9 @@ import httpx
 import time
 import os
 import asyncio
+import logging
+
+logger = logging.getLogger(__name__)
 
 _cache = {}
 CACHE_TTL = 60
@@ -35,7 +38,7 @@ async def _fetch(url: str) -> dict:
                 _cache[cached_url] = {'data': data, 'time': now}
                 return data
         except httpx.TimeoutException:
-            print(f"TimeoutException tentativa {tentativa + 1}: {cached_url}")
+            logger.error("TimeoutException tentativa %d: %s", tentativa + 1, url)
             if cached_url in _cache:
                 return _cache[cached_url]['data']
             if tentativa < 2:
@@ -43,12 +46,16 @@ async def _fetch(url: str) -> dict:
                 continue
             raise Exception("AwesomeAPI não respondeu a tempo")
         except httpx.HTTPStatusError as e:
-            print(f"HTTPStatusError: {e.response.status_code} na URL: {cached_url}")
+            status = e.response.status_code
+            logger.error("HTTPStatusError %d na URL: %s — body: %s", status, url, e.response.text[:300])
             if cached_url in _cache:
                 return _cache[cached_url]['data']
-            raise Exception(f"Erro na AwesomeAPI: {e.response.status_code}")
+            if status >= 500 and tentativa < 2:
+                await asyncio.sleep(2 ** tentativa)
+                continue
+            raise Exception(f"Erro na AwesomeAPI: {status}")
         except Exception as e:
-            print(f"Erro inesperado tentativa {tentativa + 1}: {type(e).__name__}: {e}")
+            logger.error("Erro inesperado tentativa %d: %s: %s", tentativa + 1, type(e).__name__, e)
             if tentativa < 2:
                 await asyncio.sleep(2 ** tentativa)
                 continue

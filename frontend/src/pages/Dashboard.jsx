@@ -15,7 +15,7 @@ const MAX_EXTRA_CURRENCIES = 5
 
 export default function Dashboard() {
   const { theme, isDark } = useContext(ThemeContext)
-  const { currencies, touristRates, cryptos, loading, serverStatus } = useCurrencies()
+  const { currencies, touristRates, cryptos, loading, error, retry, serverStatus } = useCurrencies()
   const [extraCurrencies, setExtraCurrencies] = useState({})
   const [extraCryptos, setExtraCryptos] = useState({})
   const [isModalOpen, setIsModalOpen] = useState(false) 
@@ -97,8 +97,7 @@ export default function Dashboard() {
     ...Object.values(extraCurrencies)
   ].sort((a, b) => parseFloat(b.pctChange) - parseFloat(a.pctChange))
 
-  if (loading) return (
-  <div style={{
+  const statusScreenStyle = {
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
@@ -106,32 +105,69 @@ export default function Dashboard() {
     minHeight: '100vh',
     gap: '16px',
     color: theme.textSecondary,
-    fontFamily: 'Arial, sans-serif'
-  }}>
-    <img
-      src={isDark ? '/icon-white.png' : '/icon.png'}
-      alt="Currency.Dash"
-      style={{ height: '60px', opacity: 0.7 }}
-    />
-    <p style={{ fontSize: '16px', fontWeight: '600', margin: 0 }}>
-      Currency.Dash
-    </p>
-    {serverStatus === 'waking' ? (
-      <>
-        <p style={{ fontSize: '14px', margin: 0 }}>
-          ⏳ Servidor acordando...
-        </p>
-        <p style={{ fontSize: '12px', margin: 0, opacity: 0.6 }}>
-          O servidor estava em repouso. Aguarde alguns segundos.
-        </p>
-      </>
-    ) : (
-      <p style={{ fontSize: '14px', margin: 0 }}>
-        Carregando dados...
+    fontFamily: 'Arial, sans-serif',
+  }
+
+  if (loading) return (
+    <div style={statusScreenStyle}>
+      <img
+        src={isDark ? '/icon-white.png' : '/icon.png'}
+        alt="Currency.Dash"
+        style={{ height: '60px', opacity: 0.7 }}
+      />
+      <p style={{ fontSize: '16px', fontWeight: '600', margin: 0 }}>
+        Currency.Dash
       </p>
-    )}
-  </div>
-)
+      {serverStatus === 'waking' ? (
+        <>
+          <p style={{ fontSize: '14px', margin: 0 }}>
+            ⏳ Servidor acordando...
+          </p>
+          <p style={{ fontSize: '12px', margin: 0, opacity: 0.6 }}>
+            O servidor estava em repouso. Aguarde alguns segundos.
+          </p>
+        </>
+      ) : (
+        <p style={{ fontSize: '14px', margin: 0 }}>
+          Carregando dados...
+        </p>
+      )}
+    </div>
+  )
+
+  if (error) return (
+    <div style={statusScreenStyle}>
+      <img
+        src={isDark ? '/icon-white.png' : '/icon.png'}
+        alt="Currency.Dash"
+        style={{ height: '60px', opacity: 0.35 }}
+      />
+      <p style={{ fontSize: '16px', fontWeight: '600', margin: 0 }}>
+        Currency.Dash
+      </p>
+      <p style={{ fontSize: '14px', margin: 0 }}>
+        🔴 Servidor indisponível
+      </p>
+      <p style={{ fontSize: '12px', margin: 0, opacity: 0.6, textAlign: 'center', maxWidth: '260px', lineHeight: 1.6 }}>
+        Não foi possível conectar ao servidor.<br />Tente novamente em alguns instantes.
+      </p>
+      <button
+        onClick={retry}
+        style={{
+          marginTop: '4px',
+          padding: '8px 20px',
+          borderRadius: '8px',
+          border: `1px solid ${theme.border}`,
+          backgroundColor: 'transparent',
+          color: theme.textSecondary,
+          cursor: 'pointer',
+          fontSize: '13px',
+        }}
+      >
+        Tentar novamente
+      </button>
+    </div>
+  )
 
   return (
     <div style={{ padding: isMobile ? '12px' : '20px', color: theme.textPrimary }}>

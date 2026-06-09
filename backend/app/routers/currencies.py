@@ -1,5 +1,4 @@
 from fastapi import APIRouter, HTTPException
-from app.services.exchange import get_available_currencies, get_currencies
 from app.services.exchange import get_currencies, get_available_currencies, get_currency_history
 
 
