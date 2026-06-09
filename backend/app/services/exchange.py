@@ -48,6 +48,16 @@ async def _fetch(url: str) -> dict:
         except httpx.HTTPStatusError as e:
             status = e.response.status_code
             logger.error("HTTPStatusError %d na URL: %s — body: %s", status, url, e.response.text[:300])
+            if status == 429:
+                if cached_url in _cache:
+                    logger.warning("Rate limit (429) — retornando cache expirado para %s", url)
+                    return _cache[cached_url]['data']
+                if tentativa == 0:
+                    logger.warning("Rate limit (429) sem cache — aguardando 5s antes de nova tentativa")
+                    await asyncio.sleep(5)
+                    continue
+                logger.error("Rate limit (429) persistente sem cache — retornando dados vazios")
+                return {}
             if cached_url in _cache:
                 return _cache[cached_url]['data']
             if status >= 500 and tentativa < 2:
