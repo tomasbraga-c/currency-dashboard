@@ -35,6 +35,7 @@ async def _fetch(url: str) -> dict:
                 _cache[cached_url] = {'data': data, 'time': now}
                 return data
         except httpx.TimeoutException:
+            print(f"TimeoutException tentativa {tentativa + 1}: {cached_url}")
             if cached_url in _cache:
                 return _cache[cached_url]['data']
             if tentativa < 2:
@@ -42,9 +43,16 @@ async def _fetch(url: str) -> dict:
                 continue
             raise Exception("AwesomeAPI não respondeu a tempo")
         except httpx.HTTPStatusError as e:
+            print(f"HTTPStatusError: {e.response.status_code} na URL: {cached_url}")
             if cached_url in _cache:
                 return _cache[cached_url]['data']
             raise Exception(f"Erro na AwesomeAPI: {e.response.status_code}")
+        except Exception as e:
+            print(f"Erro inesperado tentativa {tentativa + 1}: {type(e).__name__}: {e}")
+            if tentativa < 2:
+                await asyncio.sleep(2 ** tentativa)
+                continue
+            raise
 
     raise Exception("AwesomeAPI: limite de tentativas atingido")
 
