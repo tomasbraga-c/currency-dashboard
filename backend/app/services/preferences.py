@@ -1,47 +1,67 @@
-from pathlib import Path
-import json
+from app.services.supabase_client import supabase
 
-BASE_DIR = Path(__file__).parent.parent.parent
-PREFERENCES_FILE = BASE_DIR / "preferences.json"
-
-def read_preferences():
-    if not PREFERENCES_FILE.exists():
-        return {}
-    with open(PREFERENCES_FILE, "r") as f:
-        return json.load(f)
-    
-def save_preferences(data: dict) -> None:
-    with open(PREFERENCES_FILE, "w") as f:
-        json.dump(data, f, indent=4)
 
 def get_preference(email: str) -> dict | None:
-    preferences = read_preferences()
-    users = preferences.get("users", [])
-    for user in users:
-        if user.get("email") == email:
-            return user
+    response = (
+        supabase.table("subscribers")
+        .select("*")
+        .eq("email", email)
+        .eq("active", True)
+        .execute()
+    )
+    if response.data:
+        return response.data[0]
     return None
 
-def upsert_preference(email: str, currencies: list, cryptos: list) -> dict:
-    preferences = read_preferences()
-    users = preferences.get("users", [])
-
-    for user in users:
-        if user.get("email") == email:
-            user["currencies"] = currencies
-            user["cryptos"] = cryptos
-            save_preferences(preferences)
-            return user
-    new_user = {
-        "email": email,
-        "currencies": currencies,
-        "cryptos": cryptos
-    }
-    users.append(new_user)
-    preferences["users"] = users
-    save_preferences(preferences)
-    return new_user
 
 def get_all_preferences() -> list:
-    preferences = read_preferences()
-    return preferences.get("users", [])
+    response = (
+        supabase.table("subscribers")
+        .select("*")
+        .eq("active", True)
+        .execute()
+    )
+    return response.data
+
+
+def upsert_preference(email: str, currencies: list, cryptos: list) -> dict:
+    existing = (
+        supabase.table("subscribers")
+        .select("*")
+        .eq("email", email)
+        .execute()
+    )
+
+    if existing.data:
+        response = (
+            supabase.table("subscribers")
+            .update({
+                "currencies": currencies,
+                "cryptos": cryptos,
+                "active": True
+            })
+            .eq("email", email)
+            .execute()
+        )
+    else:
+        response = (
+            supabase.table("subscribers")
+            .insert({
+                "email": email,
+                "currencies": currencies,
+                "cryptos": cryptos
+            })
+            .execute()
+        )
+
+    return response.data[0]
+
+
+def deactivate_preference(email: str) -> bool:
+    response = (
+        supabase.table("subscribers")
+        .update({"active": False})
+        .eq("email", email)
+        .execute()
+    )
+    return bool(response.data)
